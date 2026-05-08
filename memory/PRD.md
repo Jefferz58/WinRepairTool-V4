@@ -25,6 +25,10 @@ Pure static. Engineer drops 4 files (`index.html` + the 3 toolkit files) in a si
 - README.md pre-rendered to HTML at build time (Python `markdown` lib) and inlined — no client-side markdown parser needed.
 - Dark-theme styling: `#0a0a0f` bg, `#22d3ee` cyan accents, `#4ade80` green secondary, JetBrains Mono / Cascadia Code stack for code, Inter / system-ui for body.
 - Top status bar (winrepair-toolkit · v4.7 · stable · Win 10/11 · MIT) and hero card with cyan tagchip + 3 download buttons, all carrying `data-testid` hooks.
+- **SHA-256 hash under each download button** (full 64-char hash, monospace, muted `#6b7280`) plus a "Verify in PowerShell" code snippet showing the 3 `Get-FileHash` commands with green `PS>` prompts and cyan command text. Hashes verified to match actual file contents:
+  - WindowsRepair.ps1 → `2093573a9bd2703b38c34d3d1e06c8a7f1be0b887c55e4574ee80f7670e571ba`
+  - run.bat           → `e33e7758e82155695449b382630f2c0c63db365b24141695d7c57549101ae6d5`
+  - Launch.html       → `82080e73d1de8bce2854cc50e7c75a9ae27d0b24bae9b0ef4779f459f82932b1`
 - README rendered as documentation card: H2 in cyan (`#` prefix), H3 in green (`##` prefix), tables with cyan header row + hover rows, code blocks with cyan→green gradient left border, blockquote with cyan accent.
 - Live preview section with macOS-style frame bar (3 lights, faux URL, "open in new tab" link) embedding `Launch.html` via lazy-loaded iframe.
 - Mobile breakpoint at 720px (collapses topbar, scales hero, reduces padding).
