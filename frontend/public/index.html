@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WinRepair-Toolkit v4.7</title>
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg-elev:#11111a;
+    --bg-elev-2:#161622;
+    --border:#1f1f2e;
+    --border-strong:#2a2a3e;
+    --text:#e6e6ee;
+    --text-dim:#8b8ba0;
+    --text-muted:#5e5e75;
+    --cyan:#22d3ee;
+    --cyan-dim:#0891a8;
+    --green:#4ade80;
+    --green-dim:#16a34a;
+    --amber:#fbbf24;
+    --red:#f87171;
+    --mono:'JetBrains Mono','Cascadia Code','Fira Code','SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    background-image:
+      radial-gradient(1100px 600px at 85% -10%, rgba(34,211,238,0.06), transparent 60%),
+      radial-gradient(800px 500px at -10% 30%, rgba(74,222,128,0.04), transparent 60%);
+    background-attachment:fixed;
+  }
+  ::selection{background:rgba(34,211,238,0.25);color:#fff}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 28px 96px}
+
+  /* ---------- Top bar / Hero ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border:1px solid var(--border);
+    background:linear-gradient(180deg,#10101a 0%,#0c0c14 100%);
+    border-radius:10px;margin-bottom:32px;font-family:var(--mono);
+    font-size:13px;color:var(--text-dim);
+  }
+  .topbar .brand{color:var(--cyan);font-weight:600;letter-spacing:0.02em}
+  .topbar .brand::before{content:"▸ ";color:var(--green)}
+  .topbar .meta span{margin-left:18px}
+  .topbar .meta b{color:var(--text);font-weight:500}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;
+       background:var(--green);box-shadow:0 0 10px var(--green);
+       vertical-align:middle;margin-right:8px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  .hero{
+    border:1px solid var(--border);border-radius:14px;
+    padding:36px 36px 32px;
+    background:
+      linear-gradient(180deg,rgba(34,211,238,0.04) 0%,transparent 100%),
+      linear-gradient(180deg,#10101a 0%,#0a0a0f 100%);
+    margin-bottom:32px;position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(34,211,238,0.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(34,211,238,0.04) 1px,transparent 1px);
+    background-size:32px 32px;
+    mask-image:radial-gradient(circle at 80% 0%,#000 0%,transparent 60%);
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:1}
+  .tagchip{
+    display:inline-block;font-family:var(--mono);font-size:11px;
+    color:var(--cyan);border:1px solid rgba(34,211,238,0.35);
+    padding:4px 10px;border-radius:999px;letter-spacing:0.08em;
+    text-transform:uppercase;background:rgba(34,211,238,0.06);
+  }
+  h1.title{
+    font-size:44px;line-height:1.05;margin:14px 0 8px;
+    font-weight:700;letter-spacing:-0.02em;color:var(--text);
+  }
+  h1.title .v{color:var(--cyan);font-family:var(--mono);font-size:32px;font-weight:600}
+  .subtitle{font-size:17px;color:var(--text-dim);max-width:720px;margin:0 0 26px}
+
+  /* ---------- Download row ---------- */
+  .dl-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+  .dl{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:11px 18px;border-radius:8px;font-family:var(--mono);
+    font-size:13px;font-weight:500;text-decoration:none;
+    border:1px solid var(--border-strong);color:var(--text);
+    background:#13131e;transition:transform .12s ease,
+      border-color .12s ease,background-color .12s ease,box-shadow .12s ease;
+    cursor:pointer;
+  }
+  .dl:hover{transform:translateY(-1px);border-color:var(--cyan);
+    background:#181826;box-shadow:0 6px 22px -10px rgba(34,211,238,0.45)}
+  .dl .ic{width:14px;height:14px;flex-shrink:0;stroke:var(--cyan)}
+  .dl.primary{background:rgba(34,211,238,0.12);border-color:var(--cyan);color:#dffcff}
+  .dl.primary .ic{stroke:var(--green)}
+  .dl.primary:hover{background:rgba(34,211,238,0.2);
+    box-shadow:0 8px 28px -8px rgba(34,211,238,0.55)}
+  .dl small{color:var(--text-muted);font-size:11px;margin-left:6px;font-weight:400}
+
+  /* ---------- README content card ---------- */
+  .doc{
+    border:1px solid var(--border);border-radius:14px;
+    background:linear-gradient(180deg,#0d0d16 0%,#0a0a0f 100%);
+    padding:40px 44px;
+  }
+  .doc h1,.doc h2,.doc h3{
+    font-weight:650;letter-spacing:-0.01em;color:var(--text);
+    margin:1.6em 0 0.6em;
+  }
+  .doc h1{font-size:30px;margin-top:0;border-bottom:1px solid var(--border);padding-bottom:14px}
+  .doc h2{font-size:22px;color:var(--cyan)}
+  .doc h2::before{content:"# ";color:var(--text-muted);font-family:var(--mono);font-weight:400}
+  .doc h3{font-size:17px;color:var(--green)}
+  .doc h3::before{content:"## ";color:var(--text-muted);font-family:var(--mono);font-weight:400}
+  .doc p{color:#c8c8d6;margin:0.8em 0}
+  .doc strong{color:var(--text);font-weight:650}
+  .doc a{color:var(--cyan);text-decoration:none;border-bottom:1px dashed rgba(34,211,238,0.4)}
+  .doc a:hover{color:#67e8f9;border-bottom-style:solid}
+  .doc hr{border:none;height:1px;background:var(--border);margin:36px 0}
+  .doc ul,.doc ol{padding-left:24px;color:#c8c8d6}
+  .doc li{margin:6px 0}
+  .doc blockquote{
+    border-left:3px solid var(--cyan);background:rgba(34,211,238,0.05);
+    margin:18px 0;padding:14px 20px;border-radius:0 8px 8px 0;
+    color:#cdd0d8;
+  }
+  .doc blockquote p{margin:4px 0}
+
+  .doc code{
+    font-family:var(--mono);font-size:0.88em;
+    background:#1a1a28;color:#a5f3fc;padding:2px 7px;
+    border-radius:4px;border:1px solid #1f1f30;
+  }
+  .doc pre{
+    background:#0e0e18;border:1px solid var(--border);
+    border-radius:10px;padding:18px 20px;overflow-x:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.6;
+    margin:16px 0;color:#d4d4dc;position:relative;
+  }
+  .doc pre::before{
+    content:"";position:absolute;top:0;left:0;width:3px;height:100%;
+    background:linear-gradient(180deg,var(--cyan),var(--green));
+    border-radius:10px 0 0 10px;
+  }
+  .doc pre code{background:transparent;border:none;padding:0;color:inherit;font-size:inherit}
+
+  .doc table{
+    width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;
+    border:1px solid var(--border);border-radius:8px;overflow:hidden;
+  }
+  .doc thead{background:#13131e}
+  .doc th{
+    text-align:left;padding:11px 14px;color:var(--cyan);
+    font-weight:600;font-size:12px;text-transform:uppercase;
+    letter-spacing:0.05em;border-bottom:1px solid var(--border-strong);
+  }
+  .doc td{padding:10px 14px;border-bottom:1px solid var(--border);color:#c8c8d6}
+  .doc tr:last-child td{border-bottom:none}
+  .doc tbody tr:hover{background:rgba(34,211,238,0.03)}
+
+  /* ---------- Preview section ---------- */
+  .preview{margin-top:48px}
+  .preview-head{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:12px;margin-bottom:14px;
+  }
+  .preview-head h2{
+    margin:0;font-size:22px;color:var(--cyan);font-weight:650;
+  }
+  .preview-head h2::before{content:"# ";color:var(--text-muted);font-family:var(--mono);font-weight:400}
+  .preview-head .hint{font-family:var(--mono);font-size:12px;color:var(--text-muted)}
+  .frame-wrap{
+    border:1px solid var(--border);border-radius:14px;overflow:hidden;
+    background:#000;box-shadow:0 30px 60px -30px rgba(34,211,238,0.18);
+  }
+  .frame-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 14px;background:#0d0d16;
+    border-bottom:1px solid var(--border);font-family:var(--mono);
+    font-size:12px;color:var(--text-muted);
+  }
+  .frame-bar .lights{display:flex;gap:6px}
+  .frame-bar .lights span{width:11px;height:11px;border-radius:50%;display:block}
+  .frame-bar .lights span:nth-child(1){background:#ff5f56}
+  .frame-bar .lights span:nth-child(2){background:#ffbd2e}
+  .frame-bar .lights span:nth-child(3){background:#27c93f}
+  .frame-bar .url{margin-left:14px;color:var(--text-dim)}
+  .frame-bar .url b{color:var(--cyan);font-weight:500}
+  .frame-bar .open-link{margin-left:auto;color:var(--cyan);text-decoration:none;font-size:12px}
+  .frame-bar .open-link:hover{color:#67e8f9}
+  iframe.preview-frame{
+    display:block;width:100%;height:760px;border:0;background:#000;
+  }
+
+  footer{
+    margin-top:48px;padding-top:24px;border-top:1px solid var(--border);
+    font-family:var(--mono);font-size:12px;color:var(--text-muted);
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
+  }
+  footer b{color:var(--text-dim);font-weight:500}
+
+  @media (max-width:720px){
+    .wrap{padding:24px 16px 64px}
+    .hero{padding:24px 22px}
+    h1.title{font-size:32px}
+    h1.title .v{font-size:22px}
+    .doc{padding:24px 20px}
+    .topbar{flex-direction:column;align-items:flex-start;gap:10px}
+    .topbar .meta span{margin-left:0;margin-right:14px}
+    iframe.preview-frame{height:560px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top status bar -->
+  <div class="topbar" data-testid="status-topbar">
+    <div class="brand">winrepair-toolkit</div>
+    <div class="meta">
+      <span><span class="dot"></span><b>v4.7</b></span>
+      <span>build · <b>stable</b></span>
+      <span>target · <b>Win 10/11</b></span>
+      <span>license · <b>MIT</b></span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="tagchip">PowerShell · Lenovo Remote Support</span>
+      <h1 class="title">WinRepair-Toolkit <span class="v">v4.7</span></h1>
+      <p class="subtitle">
+        Diagnostic-first Windows repair engine with a fixed-coordinate TUI dashboard,
+        live progress bars, and auto-resume across reboots. Three files. Run as Admin.
+        Pick what to fix. Walk away.
+      </p>
+
+      <div class="dl-row" data-testid="download-row">
+        <a class="dl primary" href="WindowsRepair.ps1" download data-testid="download-ps1">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          WindowsRepair.ps1 <small>· engine</small>
+        </a>
+        <a class="dl" href="run.bat" download data-testid="download-bat">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          run.bat <small>· launcher</small>
+        </a>
+        <a class="dl" href="Launch.html" download data-testid="download-launch">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Launch.html <small>· demo</small>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- README content -->
+  <article class="doc" data-testid="readme-content">
+    <h1>🛠 WinRepair-Toolkit v4.7</h1>
+    <blockquote>
+    <p><strong>Diagnostic-first</strong> Windows repair engine with a fixed-coordinate TUI dashboard, live progress bars, and auto-resume across reboots.
+    Three files. Run as Admin. Pick what to fix. Walk away.</p>
+    </blockquote>
+    <hr />
+    <h2>📁 What's in This Repo</h2>
+    <pre><code>WinRepair-Toolkit/
+    ├── WindowsRepair.ps1   The PowerShell repair engine (v4.7)
+    ├── run.bat              One-click Admin launcher
+    ├── Launch.html          Standalone preview demo for browser
+    ├── README.md            This file
+    ├── LICENSE              MIT
+    └── .gitignore           Standard Windows / IDE ignores
+    </code></pre>
+    <p>Three files. No dashboard, no Node.js, no Python. Pure native Windows automation.</p>
+    <hr />
+    <h2>🆕 What's New in v4.7</h2>
+    <ul>
+    <li><strong>Live visual progress bar</strong> — DISM and SFC scans now show a Unicode block-char progress bar with percentage in the status bar, color-coded by progress (yellow &lt; 50%, cyan 50-89%, green 90%+)</li>
+    <li><strong>Carriage-return parsing</strong> — DISM writes its percentages without newlines using <code>\r</code>, so v4.7 reads the buffer mid-stream to capture <code>14.3%</code>, <code>62.3%</code>, etc. in real time</li>
+    <li><strong>Patience messages with elapsed time</strong> — every 2 minutes during long scans, with a special callout for the DISM 62.3% pause</li>
+    <li><strong>Removed the abort key</strong> — was unreliable, caused process zombies. Engineers can use Task Manager if a scan needs to be killed</li>
+    <li>Phase 2 stays manual — diagnostic only does instant API/WMI checks, no auto-execution of DISM/SFC</li>
+    </ul>
+    <hr />
+    <h2>🎯 The 3-Phase Workflow</h2>
+    <pre><code>Phase 1 → Pre-flight safeguard checks   (~10 seconds)
+    Phase 2 → Diagnostic scan (instant)     (~5 seconds)
+    Phase 3 → Engineer Action Menu (interactive loop)
+    </code></pre>
+    <p>The engineer is dropped into the menu and stays there until they choose <code>[E] Exit</code>. After every tool runs, the post-action menu appears — <code>[M] Main Menu</code>, <code>[R] Reboot</code>, <code>[E] Record &amp; Exit</code>.</p>
+    <hr />
+    <h2>🎮 Action Menu Options</h2>
+    <table>
+    <thead>
+    <tr>
+    <th>Key</th>
+    <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td><code>F</code></td>
+    <td><strong>Full repair</strong> — All 12 tools in recommended order</td>
+    </tr>
+    <tr>
+    <td><code>Q</code></td>
+    <td><strong>Quick repair</strong> — Only fix detected issues from Phase 2</td>
+    </tr>
+    <tr>
+    <td><code>D</code></td>
+    <td><strong>Drivers only</strong> — Auto-launches Lenovo Vantage / System Update</td>
+    </tr>
+    <tr>
+    <td><code>A</code></td>
+    <td><strong>Advanced mode</strong> — Pick individual tools by ID</td>
+    </tr>
+    <tr>
+    <td><code>R</code></td>
+    <td><strong>Generate report</strong> — Export findings to file, no repairs</td>
+    </tr>
+    <tr>
+    <td><code>N</code></td>
+    <td><strong>No action</strong> — Exit cleanly</td>
+    </tr>
+    </tbody>
+    </table>
+    <hr />
+    <h2>🧰 The 12-Tool Catalog</h2>
+    <table>
+    <thead>
+    <tr>
+    <th>ID</th>
+    <th>Tool</th>
+    <th>Reboot</th>
+    <th>Est. Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>01</td>
+    <td>Disk Cleanup</td>
+    <td>No</td>
+    <td>2-5 min</td>
+    </tr>
+    <tr>
+    <td>02</td>
+    <td>DISM CheckHealth</td>
+    <td>No</td>
+    <td>1 min</td>
+    </tr>
+    <tr>
+    <td>03</td>
+    <td>DISM ScanHealth</td>
+    <td>No</td>
+    <td>5-15 min</td>
+    </tr>
+    <tr>
+    <td>04</td>
+    <td>DISM RestoreHealth</td>
+    <td>No</td>
+    <td>10-30 min</td>
+    </tr>
+    <tr>
+    <td>05</td>
+    <td>SFC <code>/verifyonly</code></td>
+    <td>No</td>
+    <td>5-10 min</td>
+    </tr>
+    <tr>
+    <td>06</td>
+    <td>SFC <code>/scannow</code></td>
+    <td><strong>Yes</strong></td>
+    <td>10-20 min</td>
+    </tr>
+    <tr>
+    <td>07</td>
+    <td>DISM ComponentCleanup</td>
+    <td>No</td>
+    <td>3-10 min</td>
+    </tr>
+    <tr>
+    <td>08</td>
+    <td>CHKDSK <code>/f /r /x</code></td>
+    <td><strong>Yes</strong></td>
+    <td>varies</td>
+    </tr>
+    <tr>
+    <td>09</td>
+    <td>TCP/IP Reset</td>
+    <td><strong>Yes</strong></td>
+    <td>1 min</td>
+    </tr>
+    <tr>
+    <td>10</td>
+    <td>Winsock Reset</td>
+    <td><strong>Yes</strong></td>
+    <td>1 min</td>
+    </tr>
+    <tr>
+    <td>11</td>
+    <td>Flush DNS Cache</td>
+    <td>No</td>
+    <td>&lt;1 min</td>
+    </tr>
+    <tr>
+    <td>12</td>
+    <td>Perfmon Health Report</td>
+    <td>No</td>
+    <td>2 min</td>
+    </tr>
+    </tbody>
+    </table>
+    <hr />
+    <h2>🚀 Running on a Client Machine</h2>
+    <h3>Prerequisites</h3>
+    <ul>
+    <li>Windows 10 or Windows 11</li>
+    <li>Administrator rights (script auto-requests via UAC)</li>
+    <li>Internet recommended (for DISM RestoreHealth + Lenovo driver lookup)</li>
+    </ul>
+    <h3>Steps</h3>
+    <ol>
+    <li>Transfer all 3 files to the client's machine via your remote tool (AnyDesk, TeamViewer, RDP)</li>
+    <li>Keep all files in the <strong>same folder</strong></li>
+    <li>Double-click <code>run.bat</code> — UAC prompt will appear, click Yes</li>
+    <li>Watch Phase 1 and Phase 2 complete</li>
+    <li>Pick an action from the menu</li>
+    <li>Logs save automatically to <code>C:\RepairLogs\</code></li>
+    </ol>
+    <p>The PowerShell terminal that opens <strong>is</strong> the live view — you'll watch the entire process through your remote session in real-time.</p>
+    <hr />
+    <h2>🔄 Auto-Resume Across Reboots</h2>
+    <p>When a tool needs a reboot (CHKDSK, SFC /scannow, network resets), the script:</p>
+    <ol>
+    <li>Saves remaining queue to <code>C:\RepairLogs\resume-state.json</code></li>
+    <li>Registers a Windows Scheduled Task (<code>WinRepair-AutoResume</code>) that runs on next login</li>
+    <li>Reboots automatically (or asks first based on your preference)</li>
+    <li>Picks up exactly where it left off after restart</li>
+    <li>Self-cleans the Scheduled Task when finished</li>
+    </ol>
+    <hr />
+    <h2>🧱 No AI / No API Keys / No Vendor Dependencies</h2>
+    <p>This is <strong>100% deterministic automation</strong> — no AI, no machine learning, no language models. The only external calls are:</p>
+    <ul>
+    <li><strong>Lenovo PC Support API</strong> (<code>pcsupport.lenovo.com</code>) — public driver lookup, no key required</li>
+    <li><strong>Microsoft Windows Update servers</strong> — same servers Windows Update uses natively</li>
+    <li><strong>Windows Scheduled Tasks</strong> — IT-auditable, self-cleanup</li>
+    </ul>
+    <p>Why corporate IT will approve this:</p>
+    <ul>
+    <li>✅ No compliance review for AI usage</li>
+    <li>✅ No API keys or secrets to rotate</li>
+    <li>✅ Scheduled Task is visible and auditable</li>
+    <li>✅ Group Policy pre-checks fail-safe before any changes</li>
+    <li>✅ Full session logging to <code>C:\RepairLogs\</code></li>
+    </ul>
+    <hr />
+    <h2>📦 Version History</h2>
+    <h3>v4.7 — Live Progress Bar + Improved Reliability</h3>
+    <ul>
+    <li>Visual progress bar with Unicode block characters (████░░░░) in status bar</li>
+    <li>Mid-buffer carriage-return parsing for live DISM/SFC percentages</li>
+    <li>Removed unreliable abort key</li>
+    <li>Bumped patience message to call out DISM 62.3% pause</li>
+    </ul>
+    <h3>v4.6 — Real-Time Percentage Tracking</h3>
+    <ul>
+    <li>Character-by-character stdout reader for DISM/SFC progress</li>
+    <li>HTTP WebRequest internet check (replaced ICMP for corporate WiFi)</li>
+    <li>PowerShell 5.1 <code>.Contains()</code> compatibility fix</li>
+    <li>Smart-quote and em-dash sanitization</li>
+    </ul>
+    <h3>v4.0 — Fixed-Coordinate TUI Dashboard</h3>
+    <ul>
+    <li>Single-screen dashboard layout (no scrolling)</li>
+    <li>Tool grid with [OK]/[FAIL]/[RUN]/[SKIP] status cells</li>
+    <li>Failed-tool re-run selection list</li>
+    <li>ReCheck option after run</li>
+    <li>Interactive Phase 3 loop with M/R/E post-action menu</li>
+    </ul>
+    <h3>v3.5 — Advanced Mode + Auto-Resume</h3>
+    <ul>
+    <li>Engineer-controlled tool selection from 14-tool catalog</li>
+    <li>Auto-resume across reboots via Scheduled Task</li>
+    <li>Configurable auto-reboot preference</li>
+    </ul>
+    <h3>v3.0 — Diagnostic-First Refactor</h3>
+    <ul>
+    <li>3-phase workflow with engineer decision tree</li>
+    <li>Lenovo Vantage launcher</li>
+    <li>Removed React + FastAPI dashboard</li>
+    </ul>
+    <h3>v2.0 — Corporate-Friendly</h3>
+    <ul>
+    <li>Group Policy pre-checks</li>
+    <li>Lenovo driver version comparison</li>
+    <li>Patience messages every 2 minutes</li>
+    </ul>
+    <h3>v1.0 — Initial Release</h3>
+    <ul>
+    <li>Basic SFC and DISM support</li>
+    </ul>
+    <hr />
+    <h2>👤 Author</h2>
+    <p><strong>Cody (Jefferz58)</strong> — IT Support Technician
+    Built for Lenovo remote support workflows.</p>
+    <p><a href="https://github.com/Jefferz58"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-Jefferz58-181717?style=flat-square&amp;logo=github&amp;logoColor=white" /></a></p>
+    <hr />
+    <h2>📜 License</h2>
+    <p>MIT License — free to use, modify, and distribute.</p>
+  </article>
+
+  <!-- Live preview -->
+  <section class="preview" data-testid="preview-section">
+    <div class="preview-head">
+      <h2>Live Preview · Launch.html</h2>
+      <span class="hint">embedded · client-side only · no network calls</span>
+    </div>
+    <div class="frame-wrap">
+      <div class="frame-bar">
+        <div class="lights"><span></span><span></span><span></span></div>
+        <div class="url">file://<b>Launch.html</b></div>
+        <a class="open-link" href="Launch.html" target="_blank" rel="noopener"
+           data-testid="open-launch-newtab">open in new tab ↗</a>
+      </div>
+      <iframe class="preview-frame" src="Launch.html" title="WinRepair Launch.html preview"
+              data-testid="launch-iframe" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <footer>
+    <span>WinRepair-Toolkit v4.7 · <b>Cody (Jefferz58)</b></span>
+    <span>MIT License · static delivery · no backend</span>
+  </footer>
+</div>
+</body>
+</html>
