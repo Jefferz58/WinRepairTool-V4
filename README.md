@@ -1,6 +1,8 @@
 🛠 WinRepair-Toolkit v4.7
 Diagnostic-first Windows repair engine with a fixed-coordinate TUI dashboard, live progress bars, and auto-resume across reboots. Three files. Run as Admin. Pick what to fix. Walk away.
 
+
+
 📁 What's in This Repo
 WinRepair-Toolkit/
     ├── WindowsRepair.ps1   The PowerShell repair engine (v4.7)
@@ -11,6 +13,8 @@ WinRepair-Toolkit/
     └── .gitignore           Standard Windows / IDE ignores
     
 Three files. No dashboard, no Node.js, no Python. Pure native Windows automation.
+
+
 
 🆕 What's New in v4.7
 Live visual progress bar — DISM and SFC scans now show a Unicode block-char progress bar with percentage in the status bar, color-coded by progress (yellow < 50%, cyan 50-89%, green 90%+)
@@ -24,6 +28,9 @@ Phase 1 → Pre-flight safeguard checks   (~10 seconds)
     Phase 3 → Engineer Action Menu (interactive loop)
     
 The engineer is dropped into the menu and stays there until they choose [E] Exit. After every tool runs, the post-action menu appears — [M] Main Menu, [R] Reboot, [E] Record & Exit.
+
+
+
 
 🎮 Action Menu Options
 Key	Action
@@ -61,8 +68,13 @@ Pick an action from the menu
 Logs save automatically to C:\RepairLogs\
 The PowerShell terminal that opens is the live view — you'll watch the entire process through your remote session in real-time.
 
+
+
 🔄 Auto-Resume Across Reboots
 When a tool needs a reboot (CHKDSK, SFC /scannow, network resets), the script:
+
+
+
 
 Saves remaining queue to C:\RepairLogs\resume-state.json
 Registers a Windows Scheduled Task (WinRepair-AutoResume) that runs on next login
@@ -71,6 +83,8 @@ Picks up exactly where it left off after restart
 Self-cleans the Scheduled Task when finished
 🧱 No AI / No API Keys / No Vendor Dependencies
 This is 100% deterministic automation — no AI, no machine learning, no language models. The only external calls are:
+
+
 
 Lenovo PC Support API (pcsupport.lenovo.com) — public driver lookup, no key required
 Microsoft Windows Update servers — same servers Windows Update uses natively
