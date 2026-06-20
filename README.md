@@ -220,7 +220,7 @@ This is 100% deterministic automation — no AI, no machine learning, no languag
 
 ## 👤 Author
 
-**Cody** ([@Jefferz58](https://github.com/Jefferz58)) — IT Support Engineer 
+**Cody** ([@Jefferz58](https://github.com/Jefferz58)) — Technical Support Engineer 
 
 Built for Lenovo remote support workflows.
 
